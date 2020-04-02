@@ -38,18 +38,18 @@ AJS.toInit(function () {
             return result * sortOrder;
         }
     }
-    
+
     function populateTable(userInformation) {
         AJS.$(".loadingDiv").show();
         AJS.$("#user-information-table-content").empty();
         AJS.$("#done-user-info-table-content").empty();
         AJS.$("#disabled-user-info-table-content").empty();
-        
+
         //sort by username
         userInformation.sort(dynamicSort("userName"));
-        
+
         for (var i = 0; i < userInformation.length; i++) {
-        	
+
             var latestEntryDate;
             if (new Date(userInformation[i].latestEntryDate).getTime() == new Date(0).getTime()) {
                 latestEntryDate = "none";
@@ -64,10 +64,10 @@ AJS.toInit(function () {
             }
 
             var enabled = userInformation[i].state !== "DISABLED";
-            
+
             var done = userInformation[i].state === "DONE";
 
-            var enableButton = "<button class='aui-button' id='button"+ userInformation[i].timesheetID + "'>Enable Timesheet</button>";
+            var enableDropdown =  "<select id='active-timesheet" + userInformation[i].timesheetID + "'><option value='ACTIVE'>ACTIVE</option><option value='DISABLED'>DISABLED</option><option value='SHOW' selected>SHOW</option></select>";
 
             var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
                 "data-timesheet-id='" + userInformation[i].timesheetID + "'>Timesheet</button>";
@@ -95,36 +95,35 @@ AJS.toInit(function () {
 
             var profile_link = AJS.params.baseURL + "\/secure\/ViewProfile.jspa?name=" ;
 
-        	var enabledColumn = "</td><td headers='ti-enabled'>" + enableButton;
-        	var row = "<tr>" +
-            "<td headers='ti-users' class='users'>" +
+            var enabledColumn = "</td><td headers='ti-enabled'>" + enableDropdown;
+            var row = "<tr>" +
+                "<td headers='ti-users' class='users'>" +
                 "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
-            "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +"</td>"+
-            "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
-            "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
-            "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
-            "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
-            "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
-            "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
-            "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
-            "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
-            "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
-            enabledColumn +
-            "</td></tr>";
-        	
-        	if (userInformation[i].state === "DONE") {
-        		AJS.$("#done-user-info-table-content").append(row);
-        	}
-        	else if (userInformation[i].state === "DISABLED") {
-        		AJS.$("#disabled-user-info-table-content").append(row);
-        	}
-        	else {
-        		AJS.$("#user-information-table-content").append(row);
-        	}
-            
-            	
+                "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +"</td>"+
+                "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
+                "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
+                "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
+                "</td><td headers='ti-remaining-hours' class='remaining-hours'>" + userInformation[i].remainingHours +
+                "</td><td headers='ti-target-total-hours' class='ti-target-total-hours'>" + userInformation[i].targetTotalHours +
+                "</td><td headers='ti-total-practice-hours' class='total-practice'>" + userInformation[i].totalPracticeHours +
+                "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
+                "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
+                "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
+                enabledColumn +
+                "</td></tr>";
+
+            if (userInformation[i].state === "DONE") {
+                AJS.$("#done-user-info-table-content").append(row);
+            }
+            else if (userInformation[i].state === "DISABLED") {
+                AJS.$("#disabled-user-info-table-content").append(row);
+            }
+            else {
+                AJS.$("#user-information-table-content").append(row);
+            }
+
             var timesheetID = userInformation[i].timesheetID;
-            setEnableButton(timesheetID, enabled);
+            setEnableDropdownButton(timesheetID, enabled);
 
             AJS.$("[name=user-" + userInformation[i].userName + "-profile]").attr("href" , profile_link);
         }
@@ -154,57 +153,73 @@ AJS.toInit(function () {
         var numberInActiveOffline = 0;
         var numberDisabled = 0;
         var numberDone = 0;
-        
-        for (var i = 0; i < userInformation.length; i++) {
-        	
-        	numberTotal++;
-        	
-        	if (userInformation[i].state === "ACTIVE")
-        		numberActive++;
-        	else if (userInformation[i].state === "INACTIVE")
-        		numberInActive++;
-        	else if (userInformation[i].state === "AUTO_INACTIVE")
-        		numberAutoInActive++;
-        	else if (userInformation[i].state === "INACTIVE_OFFLINE")
-        		numberInActiveOffline++;
-        	else if (userInformation[i].state === "DISABLED")
-        		numberDisabled++;
-        	else if (userInformation[i].state === "DONE")
-        		numberDone++;
-        	
-        }
-        
-        var row = "<tr><td>" + "Total Number of Timesheets: " + numberTotal + "</td>" +
-        				"<td>" + "Active Timesheets: " + numberActive + "</td>" +
-                  		"<td>" + "Auto Inactive Timesheets: " + numberAutoInActive + "</td>" +
-                  		"<td>" + "Inactive Timesheets: " + numberInActive + "</td>" +
-                  "</tr>" +
 
-                  "<tr><td>" + "Disabled Timesheets: " + numberDisabled + "</td>" +
-                  		"<td>" + "InactiveOffline Timesheets: " + numberInActiveOffline + "</td>" +
-                  		"<td>" + "Done Timesheets: " + numberDone + "</td>" +
-                  "</tr>";
+        for (var i = 0; i < userInformation.length; i++) {
+
+            numberTotal++;
+
+            if (userInformation[i].state === "ACTIVE")
+                numberActive++;
+            else if (userInformation[i].state === "INACTIVE")
+                numberInActive++;
+            else if (userInformation[i].state === "AUTO_INACTIVE")
+                numberAutoInActive++;
+            else if (userInformation[i].state === "INACTIVE_OFFLINE")
+                numberInActiveOffline++;
+            else if (userInformation[i].state === "DISABLED")
+                numberDisabled++;
+            else if (userInformation[i].state === "DONE")
+                numberDone++;
+
+        }
+
+        var row = "<tr><td>" + "Total Number of Timesheets: " + numberTotal + "</td>" +
+            "<td>" + "Active Timesheets: " + numberActive + "</td>" +
+            "<td>" + "Auto Inactive Timesheets: " + numberAutoInActive + "</td>" +
+            "<td>" + "Inactive Timesheets: " + numberInActive + "</td>" +
+            "</tr>" +
+
+            "<tr><td>" + "Disabled Timesheets: " + numberDisabled + "</td>" +
+            "<td>" + "InactiveOffline Timesheets: " + numberInActiveOffline + "</td>" +
+            "<td>" + "Done Timesheets: " + numberDone + "</td>" +
+            "</tr>";
 
         AJS.$("#timesheet-user-statistics").append(row);
 
         AJS.$(".loadingDiv").hide();
     }
 
-    function setEnableButton(timesheetID, enabled) {
-        var button = AJS.$("#button" + timesheetID);
-        button.prop("onclick", null).off("click");
+    function setEnableDropdownButton(timesheetID, enabled) {
+        console.log("Set enable Called for timesheet " + timesheetID + " enabled = " + enabled );
+        // Enabled (bool) shows State of TimeSheet
+        // timeSheetID => userInformation[i].timesheetID
+        /*
+            0:<option value='ACTIVE'>ACTIVE</option>
+            1:<option value='DISABLED'>DISABLED</option>
+            2:<option value='SHOW'>SHOW</option></select>
+         */
+
+        //var dropDownButton = AJS.$("#active-timesheet" + timesheetID);
+        //var dropDownButton = document.getElementById("active-timesheet" +timesheetID);
+        var dropDownButton =  AJS.$("#active-timesheet" + timesheetID);
+
+
         if (enabled) {
-            button.text("Disable Timesheet");
-            button.click(function () {
-                setTimesheetState(timesheetID, false)
-            });
-            button.css("background", "");
-        } else {
-            button.text("Enable Timesheet");
-            button.click(function () {
-                setTimesheetState(timesheetID, true)
-            });
-            button.css("background", "red");
+            dropDownButton.prop.options[0].disabled = true;
+            //console.log(dropDownButton.selectedIndex);
+           var x = document.getElementById("active-timesheet"+timesheetID).onchange;
+           console.log(x);
+                //setTimesheetState(timesheetID, false);
+            }
+        //    dropDownButton.css("background", "");
+         else {
+            dropDownButton.prop.options[1].disabled = true;
+
+            //dropDownButton.text("Enable Timesheet");
+          //  dropDownButton.click(function () {
+          //      setTimesheetState(timesheetID, true)
+          //  });
+      //     dropDownButton.css("background", "red");
         }
     }
 
@@ -227,7 +242,7 @@ AJS.toInit(function () {
                     delay: 5000,
                     duration: 5000
                 });
-                setEnableButton(timesheetID, enabled);
+                setEnableDropdownButton(timesheetID, enabled);
                 if (enabled) {
                     AJS.$("#state" + timesheetID).text("ACTIVE");
                 } else {
@@ -268,10 +283,10 @@ AJS.toInit(function () {
             data: JSON.stringify(data),
             processData: false,
             success: function () {
-            	if(fetchingErrorMessage)
-            		fetchingErrorMessage.closeMessage();
-            	if(errorMessage)
-            		errorMessage.closeMessage();
+                if(fetchingErrorMessage)
+                    fetchingErrorMessage.closeMessage();
+                if(errorMessage)
+                    errorMessage.closeMessage();
                 AJS.messages.success({
                     title: "Success!",
                     body: "Timesheet 'enabled states' updated.",
@@ -282,8 +297,8 @@ AJS.toInit(function () {
                 AJS.$(".loadingDiv").hide();
             },
             error: function (error) {
-            	if(errorMessage)
-            		errorMessage.closeMessage();
+                if(errorMessage)
+                    errorMessage.closeMessage();
                 errorMessage = AJS.messages.error({
                     title: "Error!",
                     body: error.responseText
@@ -303,8 +318,8 @@ AJS.toInit(function () {
         AJS.$.when(userInformationFetched)
             .done(populateTable)
             .fail(function (error) {
-            	if(fetchingErrorMessage)
-            		fetchingErrorMessage.closeMessage();
+                if(fetchingErrorMessage)
+                    fetchingErrorMessage.closeMessage();
                 fetchingErrorMessage = AJS.messages.error({
                     title: 'There was an error while fetching the required data.',
                     body: '<p>Reason: ' + error.responseText + '</p>'

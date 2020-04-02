@@ -117,7 +117,7 @@
             <thead>
             <tr>
                 <th id="ti-users">User</th>
-                <th id="ti-view-timesheet">Timesheet Link</th>                     
+                <th id="ti-view-timesheet">Timesheet Link (TEST)</th>
                 <th id="ti-team">Team</th>
                 <th id="ti-state">State</th>
                 <th id="ti-inactive-end-date">Inactive End Date</th>
@@ -135,6 +135,16 @@
             </tbody>
         </table>		                		                	                
    </div>
+
+
+#* content of enable/disable dropdown *#
+      <aui-dropdown-menu id="enable-timesheet">
+        <aui-section label="choose options">
+            <aui-item-radio interactive checked>disable timesheet</aui-item-radio>
+            <aui-item-radio disabled interactive>enable timesheet</aui-item-radio>
+            <aui-item-radio interactive>load timesheet</aui-item-radio>
+        </aui-section>
+    </aui-dropdown-menu>
 
 
 #* content of the 2nd tab "Disabled Users"*#
