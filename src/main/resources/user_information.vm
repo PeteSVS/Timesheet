@@ -25,59 +25,59 @@
 
 <body class="aui-layout aui-theme-default">
 
-	<script type="application/javascript">
-	    function showDoneUsers() {
-	        document.getElementById("done-users-table").style.visibility = "visible";
-	    }
-	</script>
-	
-	<script type="application/javascript">
-	    function showDisabledUsers() {
-	        document.getElementById("disabled-users-table").style.visibility = "visible";
-	    }
-	</script>
-	
-	<script type="application/javascript">
-	    function showActiveInactiveUsers() {
-	        document.getElementById("user-information-table").style.visibility = "visible";
-	    }
-	</script>
+<script type="application/javascript">
+    function showDoneUsers() {
+        document.getElementById("done-users-table").style.visibility = "visible";
+    }
+</script>
 
-	<script type="application/javascript">
-		function searchFunction(element, tablename, id) {
-		  // Declare variables
-		  var input, filter, table, tr, td, i;
-		  input = document.getElementById(element);
-		  filter = input.value.toUpperCase();
-		  table = document.getElementById(tablename);
-		  tr = table.getElementsByTagName("tr");
-		
-		  // Loop through all table rows, and hide those who don't match the search query
-		  for (i = 0; i < tr.length; i++) {
-		    td = tr[i].getElementsByTagName("td")[id];
-		    tdTeam = tr[i].getElementsByTagName("td")[2];
-		    if (td || tdTeam) {
-		      if (td.innerHTML.toUpperCase().indexOf(filter) > -1 || tdTeam.innerHTML.toUpperCase().indexOf(filter) > -1) {
-		        tr[i].style.display = "";
-		      } else {
-		        tr[i].style.display = "none";
-		      }
-		    }
-		  }
-		}
-	</script>	
-	
+<script type="application/javascript">
+    function showDisabledUsers() {
+        document.getElementById("disabled-users-table").style.visibility = "visible";
+    }
+</script>
 
-	<h1><b>Timesheet - User Information</b></h1>
-	<div id="aui-message-bar"></div>
-	<div class="loadingDiv"><span class="aui-icon aui-icon-wait">Loading...</span></div>
-		
-#*Tabs view*#
+<script type="application/javascript">
+    function showActiveInactiveUsers() {
+        document.getElementById("user-information-table").style.visibility = "visible";
+    }
+</script>
+
+<script type="application/javascript">
+    function searchFunction(element, tablename, id) {
+        // Declare variables
+        var input, filter, table, tr, td, i;
+        input = document.getElementById(element);
+        filter = input.value.toUpperCase();
+        table = document.getElementById(tablename);
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[id];
+            tdTeam = tr[i].getElementsByTagName("td")[2];
+            if (td || tdTeam) {
+                if (td.innerHTML.toUpperCase().indexOf(filter) > -1 || tdTeam.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+
+
+<h1><b>Timesheet - User Information</b></h1>
+<div id="aui-message-bar"></div>
+<div class="loadingDiv"><span class="aui-icon aui-icon-wait">Loading...</span></div>
+
+    #*Tabs view*#
 
 <div class="aui-tabs horizontal-tabs" id="table-header">
 
     <ul class="tabs-menu nav nav-tabs" id="tabs">
-    	<li class="menu-item active-tab">
+        <li class="menu-item active-tab">
             <a href="#tabs-statistic"><strong>Statistic</strong></a>
         </li>
         <li class="menu-item">
@@ -91,33 +91,32 @@
         </li>
     </ul>
 
-#*content of the first tab User Statistics*#
-    <div class="tabs-pane active-pane" id="tabs-statistic">     
-        
-            <h2><b> Timesheet User Statistics</b></h2>
-            
-            <p>
-            <table id ="user-information-statistics-table" border="2" frame="void" cellspacing="5" cellpadding="5">
-              <tbody id="timesheet-user-statistics">
+    #*content of the first tab User Statistics*#
+    <div class="tabs-pane active-pane" id="tabs-statistic">
+
+        <h2><b> Timesheet User Statistics</b></h2>
+
+        <p>
+        <table id ="user-information-statistics-table" border="2" frame="void" cellspacing="5" cellpadding="5">
+            <tbody id="timesheet-user-statistics">
                 #* will be filled out by JavaScript *#
-              </tbody>
-            </table>
+            </tbody>
+        </table>
 
-   </div>
+    </div>
 
 
-#*content of the tab Active & Inactive*#
-    <div class="tabs-pane" id="tabs-users">     
-		                
+    #*content of the tab Active & Inactive*#
+    <div class="tabs-pane" id="tabs-users">
+
         <h2><b> Active and Inactive Timesheets</b></h2>
         <p>
-        <input type="text" id="searchInputNamesActive" onkeyup="searchFunction('searchInputNamesActive', 'user-information-table', 0)" placeholder="Search for Users or Teams...">
+            <input type="text" id="searchInputNamesActive" onkeyup="searchFunction('searchInputNamesActive', 'user-information-table', 0)" placeholder="Search for Users or Teams...">
         <p>
         <table id="user-information-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
                 <th id="ti-users">User</th>
-                <th id="ti-view-timesheet">Timesheet Link (TEST)</th>
                 <th id="ti-team">Team</th>
                 <th id="ti-state">State</th>
                 <th id="ti-inactive-end-date">Inactive End Date</th>
@@ -131,34 +130,23 @@
             </tr>
             </thead>
             <tbody class="list" id="user-information-table-content">
-            #* will be filled out by JavaScript *#
+                #* will be filled out by JavaScript *#
             </tbody>
-        </table>		                		                	                
-   </div>
+        </table>
+    </div>
 
 
-#* content of enable/disable dropdown *#
-      <aui-dropdown-menu id="enable-timesheet">
-        <aui-section label="choose options">
-            <aui-item-radio interactive checked>disable timesheet</aui-item-radio>
-            <aui-item-radio disabled interactive>enable timesheet</aui-item-radio>
-            <aui-item-radio interactive>load timesheet</aui-item-radio>
-        </aui-section>
-    </aui-dropdown-menu>
+    #* content of the 2nd tab "Disabled Users"*#
 
-
-#* content of the 2nd tab "Disabled Users"*#
-
-    <div class="tabs-pane" id="tabs-disabled-users">   
-		<h2><b>Disabled Users</b></h2>
+    <div class="tabs-pane" id="tabs-disabled-users">
+        <h2><b>Disabled Users</b></h2>
         <p>
-        <input type="text" id="searchInputNamesDisabled" onkeyup="searchFunction('searchInputNamesDisabled', 'disabled-users-table', 0)" placeholder="Search for Users or Teams...">
+            <input type="text" id="searchInputNamesDisabled" onkeyup="searchFunction('searchInputNamesDisabled', 'disabled-users-table', 0)" placeholder="Search for Users or Teams...">
         <p>
         <table id="disabled-users-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
                 <th id="ti-users">User</th>
-                <th id="ti-view-timesheet">Timesheet Link</th>                       
                 <th id="ti-team">Team</th>
                 <th id="ti-state">State</th>
                 <th id="ti-inactive-end-date">Inactive End Date</th>
@@ -172,24 +160,23 @@
             </tr>
             </thead>
             <tbody class="list" id="disabled-user-info-table-content">
-            #* will be filled out by JavaScript *#
+                #* will be filled out by JavaScript *#
             </tbody>
         </table>
     </div>
 
 
-#*    content of the 3rd tab "Done Users"*#
+    #*    content of the 3rd tab "Done Users"*#
     <div class="tabs-pane" id="tabs-done-users">
-    
-		<h2><b>Done Users </b></h2>
+
+        <h2><b>Done Users </b></h2>
         <p>
-        <input type="text" id="searchInputNamesDone" onkeyup="searchFunction('searchInputNamesDone', 'done-users-table', 0)" placeholder="Search for Users or Teams...">
+            <input type="text" id="searchInputNamesDone" onkeyup="searchFunction('searchInputNamesDone', 'done-users-table', 0)" placeholder="Search for Users or Teams...">
         <p>
         <table id="done-users-table" class="aui aui-table-interactive aui-table-sortable">
             <thead>
             <tr>
                 <th id="ti-users">User</th>
-                <th id="ti-view-timesheet">Timesheet Link</th>                     
                 <th id="ti-team">Team</th>
                 <th id="ti-state">State</th>
                 <th id="ti-inactive-end-date">Inactive End Date</th>
@@ -203,7 +190,7 @@
             </tr>
             </thead>
             <tbody class="list" id="done-user-info-table-content">
-            #* will be filled out by JavaScript *#
+                #* will be filled out by JavaScript *#
             </tbody>
         </table>
     </div>

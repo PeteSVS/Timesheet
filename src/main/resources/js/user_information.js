@@ -23,7 +23,6 @@ AJS.toInit(function () {
     var baseUrl = AJS.params.baseURL;
     restBaseUrl = baseUrl + "/rest/timesheet/latest/";
 
-    var timesheet = [];
     var errorMessage;
     var fetchingErrorMessage;
 
@@ -67,7 +66,12 @@ AJS.toInit(function () {
 
             var done = userInformation[i].state === "DONE";
 
-            var enableDropdown =  "<select id='active-timesheet" + userInformation[i].timesheetID + "'><option value='ACTIVE'>ACTIVE</option><option value='DISABLED'>DISABLED</option><option value='SHOW' selected>SHOW</option></select>";
+        // var enableDropdown =  "<select id='active-timesheet" + userInformation[i].timesheetID + "' onchange='getComboA(this)'><option value='ACTIVE'>ACTIVE</option><option value='DISABLED'>DISABLED</option><option value='SHOW'>SHOW</option><option value='selectAction' selected disabled>SELECT ACTION</option></select>";
+           var enableDropdown =  "<aui-select id='active-timesheet" + userInformation[i].timesheetID + "' ><aui-option type='text2' value='ACTIVE'>ACTIVE</aui-option><aui-option value='DISABLED'>DISABLED</aui-option><aui-option value='SHOW'>SHOW</aui-option></aui-select>";
+
+
+
+
 
             var view_timesheet_button = "<button class='aui-button aui-button-primary view-timesheet-button' " +
                 "data-timesheet-id='" + userInformation[i].timesheetID + "'>Timesheet</button>";
@@ -99,7 +103,6 @@ AJS.toInit(function () {
             var row = "<tr>" +
                 "<td headers='ti-users' class='users'>" +
                 "<a href='#' class='view-profile-link' data-user-name='" + userInformation[i].userName + "'>" + userInformation[i].userName + "</a> "+
-                "</td><td headers='ti-view-timesheet'>"+ view_timesheet_button +"</td>"+
                 "</td><td headers='ti-team' class='team'>" + userInformation[i].teams +
                 "</td><td headers='ti-state' class='state' id='state"+ userInformation[i].timesheetID + "' style='color:" + current_state_color + "';>" + userInformation[i].state +
                 "</td><td headers='ti-inactive-end-date' class='inactive-end'>" + inactiveEndDate +
@@ -109,8 +112,7 @@ AJS.toInit(function () {
                 "</td><td headers='ti-hours-per-half-year' class='hours-half-year'>" + userInformation[i].hoursPerHalfYear +
                 "</td><td headers='ti-latest-entry-date' class='latest-date'>" + latestEntryDate +
                 "</td><td headers='ti-latest-entry-description' class='latest-description'>" + userInformation[i].latestEntryDescription +
-                enabledColumn +
-                "</td></tr>";
+                enabledColumn +  "</td></tr>";
 
             if (userInformation[i].state === "DONE") {
                 AJS.$("#done-user-info-table-content").append(row);
@@ -123,7 +125,9 @@ AJS.toInit(function () {
             }
 
             var timesheetID = userInformation[i].timesheetID;
+
             setEnableDropdownButton(timesheetID, enabled);
+
 
             AJS.$("[name=user-" + userInformation[i].userName + "-profile]").attr("href" , profile_link);
         }
@@ -189,38 +193,48 @@ AJS.toInit(function () {
         AJS.$(".loadingDiv").hide();
     }
 
+
+
     function setEnableDropdownButton(timesheetID, enabled) {
-        console.log("Set enable Called for timesheet " + timesheetID + " enabled = " + enabled );
-        // Enabled (bool) shows State of TimeSheet
-        // timeSheetID => userInformation[i].timesheetID
-        /*
-            0:<option value='ACTIVE'>ACTIVE</option>
-            1:<option value='DISABLED'>DISABLED</option>
-            2:<option value='SHOW'>SHOW</option></select>
-         */
 
-        //var dropDownButton = AJS.$("#active-timesheet" + timesheetID);
-        //var dropDownButton = document.getElementById("active-timesheet" +timesheetID);
-        var dropDownButton =  AJS.$("#active-timesheet" + timesheetID);
+        var active_dropdown = document.getElementById("active-timesheet" + timesheetID);
 
+        if (enabled)
+        {
+            active_dropdown.onchange = function () {
+               //console.log(document.getElementById("active-timesheet" + timesheetID));
+               var user_choice = document.getElementById("active-timesheet" + timesheetID).value;
 
-        if (enabled) {
-            dropDownButton.prop.options[0].disabled = true;
-            //console.log(dropDownButton.selectedIndex);
-           var x = document.getElementById("active-timesheet"+timesheetID).onchange;
-           console.log(x);
-                //setTimesheetState(timesheetID, false);
+                switch (user_choice) {
+                    case "DISABLED":
+                        setTimesheetState(timesheetID, false);
+                        break;
+                    case "SHOW":
+                        window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheetID, "_blank");
+                        break;
+                    default:
+                    // should not get here
+                }
             }
-        //    dropDownButton.css("background", "");
-         else {
-            dropDownButton.prop.options[1].disabled = true;
-
-            //dropDownButton.text("Enable Timesheet");
-          //  dropDownButton.click(function () {
-          //      setTimesheetState(timesheetID, true)
-          //  });
-      //     dropDownButton.css("background", "red");
         }
+        else
+        {
+            active_dropdown.onchange = function () {
+                var user_choice = document.getElementById("active-timesheet" + timesheetID).value;
+
+                switch (user_choice) {
+                    case "ACTIVE":
+                        setTimesheetState(timesheetID, true);
+                        break;
+                    case "SHOW":
+                        window.open(AJS.params.baseURL + "/plugins/servlet/timesheet?timesheetID=" + timesheetID, "_blank");
+                        break;
+                    default:
+                    // should not get here
+                }
+            }
+        }
+
     }
 
     function setTimesheetState(timesheetID, enabled) {
@@ -242,7 +256,9 @@ AJS.toInit(function () {
                     delay: 5000,
                     duration: 5000
                 });
+
                 setEnableDropdownButton(timesheetID, enabled);
+
                 if (enabled) {
                     AJS.$("#state" + timesheetID).text("ACTIVE");
                 } else {
@@ -271,7 +287,7 @@ AJS.toInit(function () {
             tempData.timesheetID = users[i].timesheetID;
             var tmpCheckBox = AJS.$("#checkBox" + users[i].timesheetID);
             tempData.isEnabled = tmpCheckBox.prop("checked");
-//            console.log(tempData);
+
             data.push(tempData);
         }
 
